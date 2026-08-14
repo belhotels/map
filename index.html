@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отели России | Обзоры</title>
+    <style>
+        :root {
+            --vk-color: #0077FF;
+            --tg-color: #229ED9;
+            --max-color: #FF3B30;
+            --map-color: #34A853; /* Фирменный зеленый Google Maps */
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        /* Стили для аватара/логотипа проекта */
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff7b00, #ffae00);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 123, 0, 0.2);
+        }
+        h2 {
+            color: #1a1a1a;
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        p {
+            color: #666;
+            margin: 0 0 28px 0;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        /* Интерактивные кнопки */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Эффект наведения и клика (понятность кликабельности) */
+        @media (hover: hover) {
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+                filter: brightness(1.05);
+            }
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            filter: brightness(0.95);
+        }
+        .btn-vk { background-color: var(--vk-color); }
+        .btn-tg { background-color: var(--tg-color); }
+        .btn-max { background-color: var(--max-color); }
+        .btn-map { background-color: var(--map-color); }
+        
+        .icon {
+            margin-right: 12px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+        /* Динамические блоки переключения режимов */
+        .mode-block {
+            display: none;
+        }
+        .mode-block.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Логотип сверху (универсальный эмодзи, можно заменить на картинку <img src="...">) -->
+    <div class="logo-placeholder">🏨</div>
+
+    <!-- РЕЖИМ 1: Человек пришел из ТОЧКИ НА КАРТЕ (выбор где читать обзор) -->
+    <div id="mode-hotel" class="mode-block">
+        <h2>Где вам удобнее читать?</h2>
+        <p>Выберите платформу, чтобы открыть полный обзор этого отеля</p>
+        
+        <a href="#" id="link-vk" class="btn btn-vk"><span class="icon">🌐</span>Читать ВКонтакте</a>
+        <a href="#" id="link-tg" class="btn btn-tg"><span class="icon">💬</span>Открыть в Telegram</a>
+        <a href="#" id="link-max" class="btn btn-max"><span class="icon">🚀</span>Читать в MAX</a>
+    </div>
+
+    <!-- РЕЖИМ 2: Человек перешел по прямой ссылке (Главная визитка проекта) -->
+    <div id="mode-main" class="mode-block">
+        <h2>Отели России</h2>
+        <p>Честные обзоры, подборки и отзывы. Подписывайтесь, где вам удобно!</p>
+        
+        <!-- Замените адреса ниже на ссылки ваших ГЛАВНЫХ страниц каналов/групп -->
+        <a href="https://vk.com" target="_blank" class="btn btn-vk"><span class="icon">🌐</span>Наш ВКонтакте</a>
+        <a href="https://t.me" target="_blank" class="btn btn-tg"><span class="icon">💬</span>Наш Telegram</a>
+        <a href="https://max.ru" target="_blank" class="btn btn-max"><span class="icon">🚀</span>Мы в чате MAX</a>
+        
+        <!-- Кнопка карты. Замените на публичную ссылку вашей Google My Maps -->
+        <a href="https://google.com" target="_blank" class="btn btn-map"><span class="icon">📍</span>Открыть карту отелей</a>
+    </div>
+</div>
+
+<script>
+    // Функция считывания параметров из ссылки
+    function getParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    const vkUrl = getParam('vk');
+    const tgUrl = getParam('tg');
+    const maxUrl = getParam('max');
+
+    // Логика переключения экранов
+    if (vkUrl || tgUrl || maxUrl) {
+        // Если есть хоть одна метка — это переход по конкретному отелю
+        document.getElementById('mode-hotel').classList.add('active');
+        
+        if (vkUrl) { document.getElementById('link-vk').href = decodeURIComponent(vkUrl); } 
+        else { document.getElementById('link-vk').style.display = 'none'; }
+
+        if (tgUrl) { document.getElementById('link-tg').href = decodeURIComponent(tgUrl); } 
+        else { document.getElementById('link-tg').style.display = 'none'; }
+
+        if (maxUrl) { document.getElementById('link-max').href = decodeURIComponent(maxUrl); } 
+        else { document.getElementById('link-max').style.display = 'none'; }
+    } else {
+        // Если меток нет — показываем главную страницу-визитку со всеми соцсетями и картой
+        document.getElementById('mode-main').classList.add('active');
+    }
+</script>
+
+</body>
+</html>

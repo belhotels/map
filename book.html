@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор платформы бронирования</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 { color: #1a1a1a; margin: 0 0 10px 0; font-size: 22px; font-weight: 700; }
+        p { color: #666; margin: 0 0 25px 0; font-size: 14px; line-height: 1.5; }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .btn:active { transform: translateY(1px); filter: brightness(0.95); }
+        
+        /* Кнопка Островка */
+        .btn-ost { background: linear-gradient(135deg, #ff7b00 0%, #ff5c00 100%); }
+        /* Кнопка Яндекса */
+        .btn-yan { background: linear-gradient(135deg, #9b51e0 0%, #8c24ef 100%); }
+
+        .icon { margin-right: 12px; width: 22px; height: 22px; display: flex; align-items: center; }
+        .icon img { width: 100%; height: 100%; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Где вам удобнее забронировать?</h2>
+    <p>Выберите популярный сервис, чтобы проверить свободные места и актуальные цены:</p>
+    
+    <!-- Кнопка Островка (С защитой) -->
+    <a href="#" id="btn-ost" class="btn btn-ost" style="display: none;">
+        <span class="icon"><img src="max.svg" onerror="this.src='https://placehold.co'"></span>
+        Забронировать на Ostrovok
+    </a>
+
+    <!-- Кнопка Яндекса (Обычный надежный переход) -->
+    <a href="#" id="btn-yan" class="btn btn-yan" style="display: none;">
+        <span class="icon"><img src="map.svg" onerror="this.src='https://placehold.co'"></span>
+        Забронировать на Яндексе
+    </a>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const ostLink = urlParams.get('ost');
+    const yanLink = urlParams.get('yan');
+
+    // Настройка Островка (Внедряем блокировку DeepLink через смену события)
+    if (ostLink) {
+        const ostBtn = document.getElementById('btn-ost');
+        ostBtn.style.display = 'flex';
+        ostBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.replace(decodeURIComponent(ostLink));
+        });
+    }
+
+    // Настройка Яндекса (Прямой легальный переход)
+    if (yanLink) {
+        const yanBtn = document.getElementById('btn-yan');
+        yanBtn.style.display = 'flex';
+        yanBtn.href = decodeURIComponent(yanLink);
+    }
+</script>
+
+</body>
+</html>

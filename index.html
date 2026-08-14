@@ -8,7 +8,8 @@
         :root {
             --vk-color: #0077FF;
             --tg-color: #229ED9;
-            --max-color: #FF3B30;
+            /* Фирменный насыщенный сине-фиолетовый цвет для MAX */
+            --max-color: #3b42e4; 
             --map-color: #34A853;
         }
         body {
@@ -31,7 +32,6 @@
             max-width: 420px;
             width: 100%;
         }
-        /* Стили для реальной аватарки вашего канала */
         .avatar {
             width: 90px;
             height: 90px;
@@ -54,7 +54,6 @@
             font-size: 15px;
             line-height: 1.5;
         }
-        /* Интерактивные кнопки */
         .btn {
             display: flex;
             align-items: center;
@@ -71,6 +70,10 @@
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
+        /* Плавный градиент для кнопки MAX, повторяющий стиль иконки */
+        .btn-max { 
+            background: linear-gradient(135deg, #1d82f3 0%, #3b42e4 50%, #9127ff 100%); 
+        }
         @media (hover: hover) {
             .btn:hover {
                 transform: translateY(-2px);
@@ -85,10 +88,8 @@
         }
         .btn-vk { background-color: var(--vk-color); }
         .btn-tg { background-color: var(--tg-color); }
-        .btn-max { background-color: var(--max-color); }
         .btn-map { background-color: var(--map-color); }
         
-        /* Стили для SVG иконок */
         .icon {
             margin-right: 12px;
             width: 22px;
@@ -109,10 +110,10 @@
 <body>
 
 <div class="container">
-    <!-- Реальная аватарка. Файл avatar.jpg должен лежать в репозитории на GitHub рядом с index.html -->
+    <!-- Ваша аватарка проекта (добавьте файл avatar.jpg в репозиторий) -->
     <img src="avatar.jpg" alt="Логотип" class="avatar" onerror="this.src='https://placehold.co'">
 
-    <!-- РЕЖИМ 1: Из точки на карте -->
+    <!-- РЕЖИМ 1: Из точки на карте (Выбор платформы для чтения обзора) -->
     <div id="mode-hotel" class="mode-block">
         <h2>Где вам удобнее читать?</h2>
         <p>Выберите платформу, чтобы открыть полный обзор этого отеля</p>
@@ -126,12 +127,13 @@
             Открыть в Telegram
         </a>
         <a href="#" id="link-max" class="btn btn-max">
-            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.16L18.42 18H5.58L12 6.16zM11 10v4h2v-4h-2zm0 5v2h2v-2h-2z"/></svg></span>
+            <!-- Официальный силуэт логотипа MAX (стилизованная округлая «М» внутри диалогового окна) -->
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 3.5c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.17 0 2.266-.31 3.213-.85L18.5 18.5l-.85-3.287c.54-.947.85-2.043.85-3.213 0-3.59-2.91-6.5-6.5-6.5zm0 2.5c2.21 0 4 1.79 4 4 0 .783-.225 1.512-.612 2.13l.235.91-.91-.235A3.974 3.974 0 0 1 12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2c.385 0 .742-.11 1.047-.3l.478.123-.123-.478c.19-.305.3-.662.3-1.047 0-1.1-.9-2-2-2z"/></svg></span>
             Читать в MAX
         </a>
     </div>
 
-    <!-- РЕЖИМ 2: Главная визитка проекта -->
+    <!-- РЕЖИМ 2: Главная мультиссылка-визитка проекта -->
     <div id="mode-main" class="mode-block">
         <h2>Отели Беларуси</h2>
         <p>Честные обзоры, подборки и отзывы.<br>Подписывайтесь, где вам удобно!</p>
@@ -145,8 +147,9 @@
             Наш ВКонтакте
         </a>
         <a href="https://max.ru/channel_belhotels" target="_blank" class="btn btn-max">
-            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.16L18.42 18H5.58L12 6.16zM11 10v4h2v-4h-2zm0 5v2h2v-2h-2z"/></svg></span>
-            Мы в чате MAX
+            <!-- Официальный силуэт логотипа MAX -->
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 3.5c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.17 0 2.266-.31 3.213-.85L18.5 18.5l-.85-3.287c.54-.947.85-2.043.85-3.213 0-3.59-2.91-6.5-6.5-6.5zm0 2.5c2.21 0 4 1.79 4 4 0 .783-.225 1.512-.612 2.13l.235.91-.91-.235A3.974 3.974 0 0 1 12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2c.385 0 .742-.11 1.047-.3l.478.123-.123-.478c.19-.305.3-.662.3-1.047 0-1.1-.9-2-2-2z"/></svg></span>
+            Мы в MAX
         </a>
         
         <a href="https://www.google.com/maps/d/u/3/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=53.5285656977354%2C26.040369617140506&z=7" target="_blank" class="btn btn-map">

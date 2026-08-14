@@ -9,7 +9,7 @@
             --vk-color: #0077FF;
             --tg-color: #229ED9;
             --max-color: #FF3B30;
-            --map-color: #34A853; /* Фирменный зеленый Google Maps */
+            --map-color: #34A853;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -30,25 +30,21 @@
             text-align: center;
             max-width: 420px;
             width: 100%;
-            transition: all 0.3s ease;
         }
-        /* Стили для аватара/логотипа проекта */
-        .logo-placeholder {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #ff7b00, #ffae00);
+        /* Стили для реальной аватарки вашего канала */
+        .avatar {
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 32px;
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 123, 0, 0.2);
+            margin: 0 auto 18px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #fff;
+            background-color: #eee;
         }
         h2 {
             color: #1a1a1a;
-            margin: 0 0 8px 0;
+            margin: 0 0 10px 0;
             font-size: 24px;
             font-weight: 700;
         }
@@ -56,7 +52,7 @@
             color: #666;
             margin: 0 0 28px 0;
             font-size: 15px;
-            line-height: 1.4;
+            line-height: 1.5;
         }
         /* Интерактивные кнопки */
         .btn {
@@ -75,7 +71,6 @@
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Эффект наведения и клика (понятность кликабельности) */
         @media (hover: hover) {
             .btn:hover {
                 transform: translateY(-2px);
@@ -93,54 +88,75 @@
         .btn-max { background-color: var(--max-color); }
         .btn-map { background-color: var(--map-color); }
         
+        /* Стили для SVG иконок */
         .icon {
             margin-right: 12px;
-            font-size: 20px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
-        /* Динамические блоки переключения режимов */
-        .mode-block {
-            display: none;
+        .icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
         }
-        .mode-block.active {
-            display: block;
-        }
+        .mode-block { display: none; }
+        .mode-block.active { display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Логотип сверху (универсальный эмодзи, можно заменить на картинку <img src="...">) -->
-    <div class="logo-placeholder">🏨</div>
+    <!-- Реальная аватарка. Файл avatar.jpg должен лежать в репозитории на GitHub рядом с index.html -->
+    <img src="avatar.jpg" alt="Логотип" class="avatar" onerror="this.src='https://placehold.co'">
 
-    <!-- РЕЖИМ 1: Человек пришел из ТОЧКИ НА КАРТЕ (выбор где читать обзор) -->
+    <!-- РЕЖИМ 1: Из точки на карте -->
     <div id="mode-hotel" class="mode-block">
         <h2>Где вам удобнее читать?</h2>
         <p>Выберите платформу, чтобы открыть полный обзор этого отеля</p>
         
-        <a href="#" id="link-vk" class="btn btn-vk"><span class="icon">🌐</span>Читать ВКонтакте</a>
-        <a href="#" id="link-tg" class="btn btn-tg"><span class="icon">💬</span>Открыть в Telegram</a>
-        <a href="#" id="link-max" class="btn btn-max"><span class="icon">🚀</span>Читать в MAX</a>
+        <a href="#" id="link-vk" class="btn btn-vk">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M15.025 21.015c-6.19 0-10.722-4.242-10.87-11.272h3.385c.1 5.101 2.342 7.258 4.12 7.705V9.743H15v4.405c2.193-.242 4.012-2.247 4.793-4.405h3.195c-.63 3.013-2.847 5.018-4.453 5.955 1.606.75 4.148 2.502 5.253 5.317h-3.52c-.86-2.695-3.003-4.773-5.268-4.995v4.995h-.002z"/></svg></span>
+            Читать ВКонтакте
+        </a>
+        <a href="#" id="link-tg" class="btn btn-tg">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1 .22-1.62.15-.15 2.73-2.5 2.78-2.7.01-.03.01-.15-.06-.21-.07-.06-.17-.04-.25-.02-.11.02-1.83 1.16-5.16 3.41-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.77-.25-1.39-.39-1.34-.83.03-.23.35-.46.97-.71 3.8-1.65 6.34-2.74 7.61-3.26 3.61-1.48 4.36-1.74 4.85-1.75.11 0 .35.03.5.16.13.1.17.25.18.35-.01.07 0 .22-.01.27z"/></svg></span>
+            Открыть в Telegram
+        </a>
+        <a href="#" id="link-max" class="btn btn-max">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.16L18.42 18H5.58L12 6.16zM11 10v4h2v-4h-2zm0 5v2h2v-2h-2z"/></svg></span>
+            Читать в MAX
+        </a>
     </div>
 
-    <!-- РЕЖИМ 2: Человек перешел по прямой ссылке (Главная визитка проекта) -->
+    <!-- РЕЖИМ 2: Главная визитка проекта -->
     <div id="mode-main" class="mode-block">
         <h2>Отели Беларуси</h2>
-        <p>Честные обзоры, подборки и отзывы. Подписывайтесь, где вам удобно!</p>
+        <p>Честные обзоры, подборки и отзывы.<br>Подписывайтесь, где вам удобно!</p>
         
-        <!-- Замените адреса ниже на ссылки ваших ГЛАВНЫХ страниц каналов/групп -->
-		<a href="https://t.me/belhotels" target="_blank" class="btn btn-tg"><span class="icon">💬</span>Наш Telegram</a>
-        <a href="https://vk.com/belhotels" target="_blank" class="btn btn-vk"><span class="icon">🌐</span>Наш ВКонтакте</a>
-        <a href="https://max.ru/channel_belhotels" target="_blank" class="btn btn-max"><span class="icon">🚀</span>Наш MAX</a>
+		<a href="https://t.me/belhotels" target="_blank" class="btn btn-tg">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1 .22-1.62.15-.15 2.73-2.5 2.78-2.7.01-.03.01-.15-.06-.21-.07-.06-.17-.04-.25-.02-.11.02-1.83 1.16-5.16 3.41-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.77-.25-1.39-.39-1.34-.83.03-.23.35-.46.97-.71 3.8-1.65 6.34-2.74 7.61-3.26 3.61-1.48 4.36-1.74 4.85-1.75.11 0 .35.03.5.16.13.1.17.25.18.35-.01.07 0 .22-.01.27z"/></svg></span>
+            Наш Telegram
+        </a>
+        <a href="https://vk.com/belhotels" target="_blank" class="btn btn-vk">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M15.025 21.015c-6.19 0-10.722-4.242-10.87-11.272h3.385c.1 5.101 2.342 7.258 4.12 7.705V9.743H15v4.405c2.193-.242 4.012-2.247 4.793-4.405h3.195c-.63 3.013-2.847 5.018-4.453 5.955 1.606.75 4.148 2.502 5.253 5.317h-3.52c-.86-2.695-3.003-4.773-5.268-4.995v4.995h-.002z"/></svg></span>
+            Наш ВКонтакте
+        </a>
+        <a href="https://max.ru/channel_belhotels" target="_blank" class="btn btn-max">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.16L18.42 18H5.58L12 6.16zM11 10v4h2v-4h-2zm0 5v2h2v-2h-2z"/></svg></span>
+            Мы в чате MAX
+        </a>
         
-        <!-- Кнопка карты. Замените на публичную ссылку вашей Google My Maps -->
-        <a href="https://www.google.com/maps/d/u/3/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=53.5285656977354%2C26.040369617140506&z=7" target="_blank" class="btn btn-map"><span class="icon">📍</span>Открыть карту отелей</a>
+        <a href="https://www.google.com/maps/d/u/3/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=53.5285656977354%2C26.040369617140506&z=7" target="_blank" class="btn btn-map">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
+            Открыть карту отелей
+        </a>
     </div>
 </div>
 
 <script>
-    // Функция считывания параметров из ссылки
     function getParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
@@ -150,9 +166,7 @@
     const tgUrl = getParam('tg');
     const maxUrl = getParam('max');
 
-    // Логика переключения экранов
     if (vkUrl || tgUrl || maxUrl) {
-        // Если есть хоть одна метка — это переход по конкретному отелю
         document.getElementById('mode-hotel').classList.add('active');
         
         if (vkUrl) { document.getElementById('link-vk').href = decodeURIComponent(vkUrl); } 
@@ -164,7 +178,6 @@
         if (maxUrl) { document.getElementById('link-max').href = decodeURIComponent(maxUrl); } 
         else { document.getElementById('link-max').style.display = 'none'; }
     } else {
-        // Если меток нет — показываем главную страницу-визитку со всеми соцсетями и картой
         document.getElementById('mode-main').classList.add('active');
     }
 </script>

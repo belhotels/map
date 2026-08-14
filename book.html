@@ -12,14 +12,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
         }
         .card {
             background: white;
-            padding: 35px 25px;
+            padding: 35px 25px 20px;
             border-radius: 24px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.06);
             text-align: center;
@@ -44,21 +44,22 @@
             cursor: pointer;
         }
         .btn:active { transform: translateY(1px); filter: brightness(0.95); }
-        
-        /* Кнопка Островка (Официальный сине-оранжевый бренд) */
-        .btn-ost { background: linear-gradient(135deg, #FF6432 0%, #FF4B14 100%); }
-        /* Кнопка Яндекса (Фирменный фиолетовый) */
+        .btn-ost { background: linear-gradient(135deg, #ff7b00 0%, #ff5c00 100%); }
         .btn-yan { background: linear-gradient(135deg, #7B1FA2 0%, #E040FB 100%); }
-
-        .icon { 
-            margin-right: 12px; 
-            width: 24px; 
-            height: 24px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
+        .icon { margin-right: 12px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
         .icon svg { width: 100%; height: 100%; }
+        
+        .ads-disclosure {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 11px;
+            color: #888;
+            text-align: left;
+            line-height: 1.4;
+        }
+        .ads-item { margin-bottom: 6px; }
+        .ads-item:last-child { margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -67,11 +68,10 @@
     <h2>Где вам удобнее забронировать?</h2>
     <p>Выберите популярный сервис, чтобы проверить свободные места и актуальные цены:</p>
     
-    <!-- Кнопка Островка (С защитой от приложений) -->
+    <!-- Кнопка Островка -->
     <a href="#" id="btn-ost" class="btn btn-ost" style="display: none;">
         <span class="icon">
-            <!-- Оригинальный векторный знак Островка -->
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 24 24" xmlns="http://w3.org">
                 <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 15c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z" fill="#fff"/>
                 <circle cx="12" cy="12" r="2.5" fill="#fff"/>
             </svg>
@@ -79,16 +79,25 @@
         Забронировать на Ostrovok
     </a>
 
-    <!-- Кнопка Яндекса (Прямой переход) -->
+    <!-- Кнопка Яндекса -->
     <a href="#" id="btn-yan" class="btn btn-yan" style="display: none;">
         <span class="icon">
-            <!-- Оригинальный векторный знак Яндекс Путешествий -->
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 24 24" xmlns="http://w3.org">
                 <path d="M19 4H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-2.5 11l-3 3-3-3h2v-4h2v4h2zm1.5-6H6V7h12v2z" fill="#fff"/>
             </svg>
         </span>
         Забронировать на Яндексе
     </a>
+
+    <!-- Блок автоматической маркировки рекламы -->
+    <div class="ads-disclosure" id="ads-box" style="display: none;">
+        <div id="ads-ost-text" class="ads-item" style="display: none;">
+            Реклама. ООО «Бронирование гостиниц», ИНН 7703389195. <span id="erid-ost"></span>
+        </div>
+        <div id="ads-yan-text" class="ads-item" style="display: none;">
+            Реклама. ООО «Яндекс Вертикали», ИНН 7704340333. <span id="erid-yan"></span>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -96,7 +105,22 @@
     const ostLink = urlParams.get('ost');
     const yanLink = urlParams.get('yan');
 
-    // Настройка Островка (Защита смены события)
+    let showAdsBox = false;
+
+    // Вспомогательная функция для автоматического поиска erid внутри длинной ссылки
+    function extractErid(url) {
+        if (!url) return null;
+        try {
+            const decodedUrl = decodeURIComponent(url);
+            // Ищем параметр erid через регулярное выражение
+            const match = decodedUrl.match(/[?&]erid=([^&]+)/);
+            return match ? match[1] : null;
+        } catch(e) {
+            return null;
+        }
+    }
+
+    // Настройка Островка
     if (ostLink) {
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
@@ -104,13 +128,31 @@
             e.preventDefault();
             window.location.replace(decodeURIComponent(ostLink));
         });
+        
+        document.getElementById('ads-ost-text').style.display = 'block';
+        const foundErid = extractErid(ostLink);
+        if (foundErid) {
+            document.getElementById('erid-ost').innerText = 'erid: ' + foundErid;
+        }
+        showAdsBox = true;
     }
 
-    // Настройка Яндекса (Прямой переход)
+    // Настройка Яндекса
     if (yanLink) {
         const yanBtn = document.getElementById('btn-yan');
         yanBtn.style.display = 'flex';
         yanBtn.href = decodeURIComponent(yanLink);
+        
+        document.getElementById('ads-yan-text').style.display = 'block';
+        const foundErid = extractErid(yanLink);
+        if (foundErid) {
+            document.getElementById('erid-yan').innerText = 'erid: ' + foundErid;
+        }
+        showAdsBox = true;
+    }
+
+    if (showAdsBox) {
+        document.getElementById('ads-box').style.display = 'block';
     }
 </script>
 

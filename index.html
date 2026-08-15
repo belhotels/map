@@ -154,8 +154,9 @@
             <span class="icon"><img src="max.svg" alt="MAX"></span>
             Читать в MAX
         </a>
-
-        <a href="#" id="link-back-map" class="btn btn-map" onclick="return goBackToMap();">
+		
+        <a href="https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6" target="_blank" class="btn btn-map">
+            <!-- Подгружаем ваш собственный файл map.svg из репозитория -->
             <span class="icon"><img src="map.svg" alt="Карта отелей"></span>
             Вернуться на карту
         </a>
@@ -190,38 +191,6 @@
 </div>
 
 <script>
-    function goBackToMap() {
-        const fallbackMap = "https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6";
-
-        try {
-            if (document.referrer && window.history.length > 1) {
-                const refUrl = new URL(document.referrer);
-                const host = refUrl.hostname.toLowerCase();
-
-                // Возвращаемся назад только если предыдущая страница — Google Maps
-                // и в истории действительно есть страница, на которую можно вернуться.
-                const isGoogleMaps =
-                    host === "maps.google.com" ||
-                    host === "google.com" ||
-                    host.endsWith(".google.com") ||
-                    host === "google.ru" ||
-                    host.endsWith(".google.ru") ||
-                    host === "maps.app.goo.gl";
-
-                if (isGoogleMaps) {
-                    window.history.back();
-                    return false;
-                }
-            }
-        } catch (e) {
-            // При любой ошибке используем запасную ссылку.
-        }
-
-        // Если вернуться назад безопасно нельзя — открываем исходную карту.
-        window.location.href = fallbackMap;
-        return false;
-    }
-
     function getParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);

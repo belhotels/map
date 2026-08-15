@@ -55,10 +55,10 @@
             font-weight: 700;
             font-size: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            gap: 8px; /* Жесткий и одинаковый отступ между иконкой и текстом для обеих кнопок */
+            gap: 12px; /* Идеальный одинаковый отступ между значком и текстом */
         }
         @media (hover: hover) {
             .btn:hover {
@@ -74,11 +74,22 @@
             background-color: #98E46E; 
             color: #0F5DE4;
         }
+        /* Стиль кнопки Островка в момент подтверждения */
+        .btn-ost.confirm {
+            background-color: #0F5DE4;
+            color: #98E46E;
+        }
         
         /* ОФИЦИАЛЬНЫЙ СТИЛЬ ЯНДЕКСА (Лиловый фон + Чернично-синий текст) */
         .btn-yan { 
             background-color: #d8cffe; 
             color: #513aae;
+        }
+
+        .icon-txt {
+            font-weight: 800;
+            font-size: 18px;
+            line-height: 1;
         }
 
         .icon { 
@@ -120,17 +131,18 @@
     <h2>Где вам удобнее забронировать?</h2>
     <p>Выберите популярный сервис,<br>чтобы проверить свободные места<br>и актуальные цены:</p>
     
-    <!-- Кнопка Островка (Чистая классическая ссылка через href) -->
+    <!-- Кнопка Островка -->
     <a href="#" id="btn-ost" target="_blank" class="btn btn-ost" style="display: none;">
-        O! Забронировать на Ostrovok
+        <span class="icon-txt" id="ost-icon">O!</span>
+        <span id="ost-text">Забронировать на Ostrovok</span>
     </a>
 
-    <!-- Кнопка Яндекса (Чистая классическая ссылка через href) -->
+    <!-- Кнопка Яндекса -->
     <a href="#" id="btn-yan" target="_blank" class="btn btn-yan" style="display: none;">
         <span class="icon">
             <img src="yandex.png" alt="Яндекс" onerror="this.src='https://placehold.co'">
         </span>
-        Забронировать на Я.Путешествиях
+        <span>Забронировать на Я.Путешествиях</span>
     </a>
 
     <!-- Блок автоматической маркировки рекламы -->
@@ -145,7 +157,7 @@
 </div>
 
 <script>
-    // ПОСТОЯННЫЕ ПАРТНЕРСКИЕ ССЫЛКИ ДЛЯ ПУСТОГО ПЕРЕХОДА
+    // ВАШИ ПРАВИЛЬНЫЕ ПАРТНЕРСКИЕ ССЫЛКИ ДЛЯ СТАНДАРТНОГО РЕЖИМА (БЕЗ ПАРАМЕТРОВ)
     const DEFAULT_OST_LINK = "https://tpo.lu";
     const DEFAULT_YAN_LINK = "https://tpo.lu";
 
@@ -154,6 +166,7 @@
     const yanLink = urlParams.get('yan');
 
     let showAdsBox = false;
+    let ostClickedOnce = false; // Флаг для отслеживания первого клика по Островку
 
     function extractErid(url) {
         if (!url) return null;
@@ -166,12 +179,41 @@
         }
     }
 
+    // Умная функция активации кнопки Островка с защитой от запуска приложений
+    function setupOstrovokButton(finalUrl) {
+        const ostBtn = document.getElementById('btn-ost');
+        ostBtn.style.display = 'flex';
+        
+        ostBtn.addEventListener('click', function(e) {
+            if (!ostClickedOnce) {
+                // ПЕРВЫЙ КЛИК: Блокируем вылет в приложение и просим подтвердить действие
+                e.preventDefault();
+                ostClickedOnce = true;
+                
+                ostBtn.classList.add('confirm');
+                document.getElementById('ost-icon').style.display = 'none';
+                document.getElementById('ost-text').innerText = 'Открыть сайт в браузере 🌐';
+                
+                // Если пользователь не нажал второй раз за 4 секунды, сбрасываем кнопку назад
+                setTimeout(function() {
+                    ostClickedOnce = false;
+                    ostBtn.classList.remove('confirm');
+                    document.getElementById('ost-icon').style.display = 'inline';
+                    document.getElementById('ost-text').innerText = 'Забронировать на Ostrovok';
+                }, 4000);
+            } else {
+                // ВТОРОЙ КЛИК: Переходим по ссылке. Браузер считает это 100% осознанным действием человека и открывает сайт
+                ostBtn.href = finalUrl;
+            }
+        });
+    }
+
     // ЛОГИКА НАСТРОЙКИ ССЫЛОК И МАРКИРОВКИ
     if (ostLink || yanLink) {
+        // РЕЖИМ А: Переход из конкретного поста (динамические ссылки на отели)
         if (ostLink) {
-            const ostBtn = document.getElementById('btn-ost');
-            ostBtn.style.display = 'flex';
-            ostBtn.href = decodeURIComponent(ostLink); // Прямой надежный переход без JS-блокировок браузера
+            const cleanOstUrl = decodeURIComponent(ostLink);
+            setupOstrovokButton(cleanOstUrl);
             
             document.getElementById('ads-ost-text').style.display = 'block';
             const foundErid = extractErid(ostLink);
@@ -184,7 +226,7 @@
         if (yanLink) {
             const yanBtn = document.getElementById('btn-yan');
             yanBtn.style.display = 'flex';
-            yanBtn.href = decodeURIComponent(yanLink); // Прямой надежный переход без JS-блокировок браузера
+            yanBtn.href = decodeURIComponent(yanLink);
             
             document.getElementById('ads-yan-text').style.display = 'block';
             const foundErid = extractErid(yanLink);
@@ -194,10 +236,8 @@
             showAdsBox = true;
         }
     } else {
-        // РЕЖИМ Б: Прямой пустой переход на book.html
-        const ostBtn = document.getElementById('btn-ost');
-        ostBtn.style.display = 'flex';
-        ostBtn.href = DEFAULT_OST_LINK;
+        // РЕЖИМ Б: Прямой пустой переход на book.html (Ваши правильные партнерки)
+        setupOstrovokButton(DEFAULT_OST_LINK);
         document.getElementById('ads-ost-text').style.display = 'block';
         document.getElementById('erid-ost').innerText = 'erid: 2VtzqwGyjVr';
 

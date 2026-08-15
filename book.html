@@ -157,6 +157,10 @@
 </div>
 
 <script>
+    // ПОСТОЯННЫЕ ПАРТНЕРСКИЕ ССЫЛКИ ДЛЯ ПУСТОГО ПЕРЕХОДА
+    const DEFAULT_OST_LINK = "https://ostrovok.tpo.lu/kqSO3lCs?erid=2VtzqwGyjVr";
+    const DEFAULT_YAN_LINK = "https://yandex.tpo.lu/xH6sEhBS?erid=2VtzqvN37rm";
+
     const urlParams = new URLSearchParams(window.location.search);
     const ostLink = urlParams.get('ost');
     const yanLink = urlParams.get('yan');
@@ -175,50 +179,74 @@
         }
     }
 
-    // Настройка Островка (Обход Universal Links через чистую симуляцию клика без истории реферера)
-    if (ostLink) {
+    // Функция безопасного открытия Островка для обхода Universal Links
+    function openOstrovokSecurely(targetUrl) {
+        const a = document.createElement('a');
+        a.href = targetUrl;
+        a.target = '_blank';
+        a.rel = 'noreferrer noopener';
+        
+        const ev = document.createEvent('MouseEvents');
+        ev.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(ev);
+    }
+
+    // ЛОГИКА ОПРЕДЕЛЕНИЯ РЕЖИМА РАБОТЫ
+    if (ostLink || yanLink) {
+        // РЕЖИМ А: Переход из конкретного поста (динамические ссылки на отели)
+        
+        if (ostLink) {
+            const ostBtn = document.getElementById('btn-ost');
+            ostBtn.style.display = 'flex';
+            ostBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                openOstrovokSecurely(decodeURIComponent(ostLink));
+            });
+            
+            document.getElementById('ads-ost-text').style.display = 'block';
+            const foundErid = extractErid(ostLink);
+            if (foundErid) {
+                document.getElementById('erid-ost').innerText = 'erid: ' + foundErid;
+            }
+            showAdsBox = true;
+        }
+
+        if (yanLink) {
+            const yanBtn = document.getElementById('btn-yan');
+            yanBtn.style.display = 'flex';
+            yanBtn.href = decodeURIComponent(yanLink);
+            
+            document.getElementById('ads-yan-text').style.display = 'block';
+            const foundErid = extractErid(yanLink);
+            if (foundErid) {
+                document.getElementById('erid-yan').innerText = 'erid: ' + foundErid;
+            }
+            showAdsBox = true;
+        }
+    } else {
+        // РЕЖИМ Б: Прямой пустой переход на book.html (активируем общие главные партнерки)
+        
+        // Кнопка Островка по умолчанию
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
         ostBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            const targetUrl = decodeURIComponent(ostLink);
-            
-            // Создаем виртуальную изолированную ссылку
-            const a = document.createElement('a');
-            a.href = targetUrl;
-            a.target = '_blank';
-            a.rel = 'noreferrer noopener'; // Скрывает контекст перехода от операционной системы
-            
-            // Запускаем нативное событие мыши. Телефон воспримет это как 
-            // внутренний клик самого браузера и откроет сайт, а не приложение.
-            const ev = document.createEvent('MouseEvents');
-            ev.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            a.dispatchEvent(ev);
+            openOstrovokSecurely(DEFAULT_OST_LINK);
         });
-        
         document.getElementById('ads-ost-text').style.display = 'block';
-        const foundErid = extractErid(ostLink);
-        if (foundErid) {
-            document.getElementById('erid-ost').innerText = 'erid: ' + foundErid;
-        }
-        showAdsBox = true;
-    }
+        document.getElementById('erid-ost').innerText = 'erid: 2VtzqwGyjVr';
 
-    // Настройка Яндекса
-    if (yanLink) {
+        // Кнопка Яндекса по умолчанию
         const yanBtn = document.getElementById('btn-yan');
         yanBtn.style.display = 'flex';
-        yanBtn.href = decodeURIComponent(yanLink);
-        
+        yanBtn.href = DEFAULT_YAN_LINK;
         document.getElementById('ads-yan-text').style.display = 'block';
-        const foundErid = extractErid(yanLink);
-        if (foundErid) {
-            document.getElementById('erid-yan').innerText = 'erid: ' + foundErid;
-        }
+        document.getElementById('erid-yan').innerText = 'erid: 2VtzqvN37rm';
+
         showAdsBox = true;
     }
 
+    // Включение блока маркировки РКН
     if (showAdsBox) {
         document.getElementById('ads-box').style.display = 'block';
     }

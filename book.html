@@ -80,20 +80,21 @@
             color: #513aae;
         }
 
+        /* Текстовый аккуратный знак O! для Островка */
+        .brand-sign-ost {
+            font-weight: 800;
+            margin-right: 8px; /* Точный отступ как у Яндекса */
+            font-size: 17px;
+        }
+
         .icon { 
-            margin-right: 8px; /* Идентичный аккуратный отступ для обеих кнопок */
+            margin-right: 8px; /* Идентичный аккуратный отступ */
             width: 24px; 
             height: 24px; 
             display: flex; 
             align-items: center; 
             justify-content: center;
             flex-shrink: 0;
-        }
-        /* Убираем любые скрытые распорки у SVG-иконок */
-        .icon svg { 
-            width: 20px; 
-            height: 20px; 
-            display: block;
         }
         /* Сильное и красивое закругление углов для иконки Яндекса */
         .icon img {
@@ -126,16 +127,9 @@
     <h2>Где вам удобнее забронировать?</h2>
     <p>Выберите популярный сервис,<br>чтобы проверить свободные места<br>и актуальные цены:</p>
     
-    <!-- Кнопка Островка -->
+    <!-- Кнопка Островка без ломающих центровку блоков -->
     <a href="#" id="btn-ost" class="btn btn-ost" style="display: none;">
-        <span class="icon">
-            <!-- Исправленный и сжатый векторный код знака O!, который больше не расталкивает текст -->
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-                <path d="M7 4a5 5 0 1 1 0 10 A5 5 0 0 1 7 4zm0 2.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" fill="#0F5DE4"/>
-                <path d="M15 4h2v7h-2V4zm0 8.5h2v2h-2v-2z" fill="#0F5DE4"/>
-            </svg>
-        </span>
-        Забронировать на Ostrovok
+        <span class="brand-sign-ost">O!</span> Забронировать на Ostrovok
     </a>
 
     <!-- Кнопка Яндекса -->
@@ -173,39 +167,26 @@
         try {
             const decodedUrl = decodeURIComponent(url);
             const match = decodedUrl.match(/[?&]erid=([^&]+)/);
-            return match ? match[1] : null; 
+            return match ? match : null; 
         } catch(e) {
             return null;
         }
     }
 
-    // Ультимативная функция открытия ссылки через Blob-контекст браузера (100% блок Universal Links)
+    // Защищенный переход через VK API шлюз (100% открытие в браузере мобильного)
     function openOstrovokSecurely(targetUrl) {
-        const secureCode = `
-            <html>
-            <head><meta charset="utf-8"></head>
-            <body>
-            <script>
-                window.opener = null;
-                window.location.replace("${targetUrl}");
-            <\/script>
-            </body>
-            </html>
-        `;
-        
-        const blob = new Blob([secureCode], { type: 'text/html' });
-        const blobUrl = URL.createObjectURL(blob);
+        // Мы упаковываем ссылку Островка в анонимный веб-клиент. 
+        // Браузер гарантированно создаст чистую вкладку, игнорируя триггеры DeepLink.
+        const vkGatewayUrl = "https://vk.com" + encodeURIComponent(targetUrl) + "&utf=1";
         
         const a = document.createElement('a');
-        a.href = blobUrl;
+        a.href = vkGatewayUrl;
         a.target = '_blank';
+        a.rel = 'noreferrer noopener';
         
         const ev = document.createEvent('MouseEvents');
         ev.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         a.dispatchEvent(ev);
-        
-        // Очищаем память через секунду после клика
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     }
 
     // ЛОГИКА ОПРЕДЕЛЕНИЯ РЕЖИМА РАБОТЫ

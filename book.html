@@ -59,7 +59,7 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            gap: 12px; /* Фиксированный одинаковый отступы на обеих кнопках */
+            gap: 12px; /* Фиксированный одинаковый отступ на обеих кнопках */
         }
         @media (hover: hover) {
             .btn:hover {
@@ -96,7 +96,7 @@
             justify-content: center;
             flex-shrink: 0;
         }
-        /* Скругление углов для yandex.png */
+        /* Скругление углов для вашей картинки yandex.png */
         .icon img {
             width: 100%;
             height: 100%;
@@ -127,13 +127,13 @@
     <h2>Где вам удобнее забронировать?</h2>
     <p>Выберите популярный сервис,<br>чтобы проверить свободные места<br>и актуальные цены:</p>
     
-    <!-- Кнопка Островка (Чистый href без блокируемых скриптов) -->
+    <!-- Кнопка Островка -->
     <a href="#" id="btn-ost" target="_blank" class="btn btn-ost" style="display: none;">
         <span class="icon-txt">O!</span>
         <span>Забронировать на Ostrovok</span>
     </a>
 
-    <!-- Кнопка Яндекса (Чистый href без блокируемых скриптов) -->
+    <!-- Кнопка Яндекса -->
     <a href="#" id="btn-yan" target="_blank" class="btn btn-yan" style="display: none;">
         <span class="icon">
             <img src="yandex.png" alt="Яндекс" onerror="this.src='https://placehold.co'">
@@ -153,9 +153,9 @@
 </div>
 
 <script>
-    // ТОЧНЫЕ ПАРТНЕРСКИЕ ССЫЛКИ ПО УМОЛЧАНИЮ БЕЗ ПАРАМЕТРОВ
-    const DEFAULT_OST_LINK = "https://tpo.lu";
-    const DEFAULT_YAN_LINK = "https://tpo.lu";
+    // ТЕПЕРЬ ССЫЛКИ ПРОПИСАНЫ СТРОГО И БЕЗ ОШИБОК
+    const DEFAULT_OST_LINK = "https://ostrovok.tpo.lu/kqSO3lCs?erid=2VtzqwGyjVr";
+    const DEFAULT_YAN_LINK = "https://yandex.tpo.lu/xH6sEhBS?erid=2VtzqvN37rm";
 
     const urlParams = new URLSearchParams(window.location.search);
     const ostLink = urlParams.get('ost');
@@ -203,7 +203,7 @@
             showAdsBox = true;
         }
     } else {
-        // РЕЖИМ Б: Прямой пустой переход на book.html (Ваши точные партнерские ссылки)
+        // РЕЖИМ Б: Прямой пустой переход на book.html (Ваши постоянные партнерки)
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
         ostBtn.href = DEFAULT_OST_LINK;

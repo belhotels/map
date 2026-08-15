@@ -72,18 +72,7 @@
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
-        @media (hover: hover) {
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-                filter: brightness(1.05);
-            }
-        }
-        .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            filter: brightness(0.95);
-        }        
+        
         /* Уникальные стили для каждой кнопки */
         .btn-tg { 
             background: linear-gradient(135deg, #37aee2 0%, #1e96c8 100%); 
@@ -138,12 +127,6 @@
         }
         .mode-block { display: none; }
         .mode-block.active { display: block; }
-        /* Разделитель для кнопки возврата */
-        .back-divider {
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
     </style>
 </head>
 <body>
@@ -172,14 +155,10 @@
             Читать в MAX
         </a>
 
-        <!-- Кнопка возврата с логикой умного перехода назад -->
-        <div class="back-divider">
-            <a href="#" id="btn-back-to-map" class="btn btn-map" onclick="goBackToMap(event)">
-			<span class="icon"><img src="map.svg" alt="Карта отелей"></span>
-			Вернуться на карту
-			</a>
-        </div>
-		
+        <a href="#" id="link-back-map" class="btn btn-map" onclick="return goBackToMap();">
+            <span class="icon"><img src="map.svg" alt="Карта отелей"></span>
+            Вернуться на карту
+        </a>
     </div>
 
     <!-- РЕЖИМ 2: Главная мультиссылка-визитка проекта -->
@@ -211,8 +190,33 @@
 </div>
 
 <script>
-    // ⚠️ УКАЖИТЕ ССЫЛКУ НА ВАШУ КАРТУ GOOGLE MY MAPS ТУТ
-    const DEFAULT_MAP_URL = 'https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6';
+    function goBackToMap() {
+        const fallbackMap = "https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6";
+
+        try {
+            if (document.referrer) {
+                const refUrl = new URL(document.referrer);
+                const host = refUrl.hostname.toLowerCase();
+
+                // Назад используем только если предыдущая страница действительно Google Maps.
+                if (
+                    host === "maps.google.com" ||
+                    host === "google.com" ||
+                    host.endsWith(".google.com") ||
+                    host === "google.ru" ||
+                    host.endsWith(".google.ru")
+                ) {
+                    window.history.back();
+                    return false;
+                }
+            }
+        } catch (e) {}
+
+        // Если источник не Google Maps (или referrer недоступен), открываем
+        // ту же карту, которая используется в первом режиме.
+        window.location.href = fallbackMap;
+        return false;
+    }
 
     function getParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -223,7 +227,7 @@
     const tgUrl = getParam('tg');
     const maxUrl = getParam('max');
 
-    if (vkUrl  tgUrl  maxUrl) {
+    if (vkUrl || tgUrl || maxUrl) {
         document.getElementById('mode-hotel').classList.add('active');
         
         if (tgUrl) { document.getElementById('link-tg').href = decodeURIComponent(tgUrl); } 
@@ -236,20 +240,6 @@
         else { document.getElementById('link-max').style.display = 'none'; }
     } else {
         document.getElementById('mode-main').classList.add('active');
-    }
-
-    // Функция проверки истории и возврата
-    function goBackToMap(event) {
-        event.preventDefault(); // Останавливаем мгновенное открытие дефолтной ссылки
-        
-        const referrer = document.referrer; // Узнаем предыдущий сайт пользователя
-        
-        // Проверяем, если адрес содержит домен Google Карт
-        if (referrer && (referrer.includes('://google.com') || referrer.includes('google.ru/maps'))) {
-            window.history.back(); // Возвращаем ровно на то же место карты
-        } else {
-            window.location.href = DEFAULT_MAP_URL; // Иначе открываем карту с чистого листа
-        }
     }
 </script>
 

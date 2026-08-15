@@ -58,6 +58,7 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            gap: 8px; /* Жесткий и одинаковый отступ между иконкой и текстом для обеих кнопок */
         }
         @media (hover: hover) {
             .btn:hover {
@@ -80,15 +81,7 @@
             color: #513aae;
         }
 
-        /* Текстовый аккуратный знак O! для Островка */
-        .brand-sign-ost {
-            font-weight: 800;
-            margin-right: 8px; /* Точный отступ как у Яндекса */
-            font-size: 17px;
-        }
-
         .icon { 
-            margin-right: 8px; /* Идентичный аккуратный отступ */
             width: 24px; 
             height: 24px; 
             display: flex; 
@@ -96,7 +89,7 @@
             justify-content: center;
             flex-shrink: 0;
         }
-        /* Сильное и красивое закругление углов для иконки Яндекса */
+        /* Сильное закругление углов для вашей картинки yandex.png */
         .icon img {
             width: 100%;
             height: 100%;
@@ -127,13 +120,13 @@
     <h2>Где вам удобнее забронировать?</h2>
     <p>Выберите популярный сервис,<br>чтобы проверить свободные места<br>и актуальные цены:</p>
     
-    <!-- Кнопка Островка без ломающих центровку блоков -->
-    <a href="#" id="btn-ost" class="btn btn-ost" style="display: none;">
-        <span class="brand-sign-ost">O!</span> Забронировать на Ostrovok
+    <!-- Кнопка Островка (Чистая классическая ссылка через href) -->
+    <a href="#" id="btn-ost" target="_blank" class="btn btn-ost" style="display: none;">
+        O! Забронировать на Ostrovok
     </a>
 
-    <!-- Кнопка Яндекса -->
-    <a href="#" id="btn-yan" class="btn btn-yan" style="display: none;">
+    <!-- Кнопка Яндекса (Чистая классическая ссылка через href) -->
+    <a href="#" id="btn-yan" target="_blank" class="btn btn-yan" style="display: none;">
         <span class="icon">
             <img src="yandex.png" alt="Яндекс" onerror="this.src='https://placehold.co'">
         </span>
@@ -167,37 +160,18 @@
         try {
             const decodedUrl = decodeURIComponent(url);
             const match = decodedUrl.match(/[?&]erid=([^&]+)/);
-            return match ? match : null; 
+            return match ? match[1] : null; 
         } catch(e) {
             return null;
         }
     }
 
-    // Защищенный переход через VK API шлюз (100% открытие в браузере мобильного)
-    function openOstrovokSecurely(targetUrl) {
-        // Мы упаковываем ссылку Островка в анонимный веб-клиент. 
-        // Браузер гарантированно создаст чистую вкладку, игнорируя триггеры DeepLink.
-        const vkGatewayUrl = "https://vk.com" + encodeURIComponent(targetUrl) + "&utf=1";
-        
-        const a = document.createElement('a');
-        a.href = vkGatewayUrl;
-        a.target = '_blank';
-        a.rel = 'noreferrer noopener';
-        
-        const ev = document.createEvent('MouseEvents');
-        ev.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        a.dispatchEvent(ev);
-    }
-
-    // ЛОГИКА ОПРЕДЕЛЕНИЯ РЕЖИМА РАБОТЫ
+    // ЛОГИКА НАСТРОЙКИ ССЫЛОК И МАРКИРОВКИ
     if (ostLink || yanLink) {
         if (ostLink) {
             const ostBtn = document.getElementById('btn-ost');
             ostBtn.style.display = 'flex';
-            ostBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                openOstrovokSecurely(decodeURIComponent(ostLink));
-            });
+            ostBtn.href = decodeURIComponent(ostLink); // Прямой надежный переход без JS-блокировок браузера
             
             document.getElementById('ads-ost-text').style.display = 'block';
             const foundErid = extractErid(ostLink);
@@ -210,7 +184,7 @@
         if (yanLink) {
             const yanBtn = document.getElementById('btn-yan');
             yanBtn.style.display = 'flex';
-            yanBtn.href = decodeURIComponent(yanLink);
+            yanBtn.href = decodeURIComponent(yanLink); // Прямой надежный переход без JS-блокировок браузера
             
             document.getElementById('ads-yan-text').style.display = 'block';
             const foundErid = extractErid(yanLink);
@@ -223,10 +197,7 @@
         // РЕЖИМ Б: Прямой пустой переход на book.html
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
-        ostBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            openOstrovokSecurely(DEFAULT_OST_LINK);
-        });
+        ostBtn.href = DEFAULT_OST_LINK;
         document.getElementById('ads-ost-text').style.display = 'block';
         document.getElementById('erid-ost').innerText = 'erid: 2VtzqwGyjVr';
 

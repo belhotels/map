@@ -194,26 +194,30 @@
         const fallbackMap = "https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6";
 
         try {
-            if (document.referrer) {
+            if (document.referrer && window.history.length > 1) {
                 const refUrl = new URL(document.referrer);
                 const host = refUrl.hostname.toLowerCase();
 
-                // Назад используем только если предыдущая страница действительно Google Maps.
-                if (
+                // Возвращаемся назад только если предыдущая страница — Google Maps
+                // и в истории действительно есть страница, на которую можно вернуться.
+                const isGoogleMaps =
                     host === "maps.google.com" ||
                     host === "google.com" ||
                     host.endsWith(".google.com") ||
                     host === "google.ru" ||
-                    host.endsWith(".google.ru")
-                ) {
+                    host.endsWith(".google.ru") ||
+                    host === "maps.app.goo.gl";
+
+                if (isGoogleMaps) {
                     window.history.back();
                     return false;
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            // При любой ошибке используем запасную ссылку.
+        }
 
-        // Если источник не Google Maps (или referrer недоступен), открываем
-        // ту же карту, которая используется в первом режиме.
+        // Если вернуться назад безопасно нельзя — открываем исходную карту.
         window.location.href = fallbackMap;
         return false;
     }

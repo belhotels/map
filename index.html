@@ -203,13 +203,13 @@
     if (vkUrl || tgUrl || maxUrl) {
         document.getElementById('mode-hotel').classList.add('active');
         
-        if (tgUrl) { document.getElementById('link-tg').href = decodeURIComponent(tgUrl); } 
+        if (tgUrl) { document.getElementById('link-tg').href = tgUrl; } 
         else { document.getElementById('link-tg').style.display = 'none'; }
 
-        if (vkUrl) { document.getElementById('link-vk').href = decodeURIComponent(vkUrl); } 
+        if (vkUrl) { document.getElementById('link-vk').href = vkUrl; } 
         else { document.getElementById('link-vk').style.display = 'none'; }
 
-        if (maxUrl) { document.getElementById('link-max').href = decodeURIComponent(maxUrl); } 
+        if (maxUrl) { document.getElementById('link-max').href = maxUrl; } 
         else { document.getElementById('link-max').style.display = 'none'; }
     } else {
         document.getElementById('mode-main').classList.add('active');

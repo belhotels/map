@@ -159,6 +159,11 @@
             <span class="icon"><img src="map.svg" alt="Карта отелей"></span>
             Вернуться на карту
         </a>
+
+        <a href="#" id="link-back-map" class="btn btn-map" onclick="return goBackToMap();">
+            <span class="icon"><img src="map.svg" alt="Карта отелей"></span>
+            Вернуться на карту
+        </a>
     </div>
 
     <!-- РЕЖИМ 2: Главная мультиссылка-визитка проекта -->
@@ -190,6 +195,18 @@
 </div>
 
 <script>
+    function goBackToMap() {
+        // Возвращаем пользователя на предыдущую страницу браузера.
+        // Это сохраняет конкретное место/состояние карты, откуда он пришёл.
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Запасной вариант, если index.html был открыт напрямую.
+            window.location.href = "https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6";
+        }
+        return false;
+    }
+
     function getParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);

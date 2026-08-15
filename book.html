@@ -81,7 +81,7 @@
         }
 
         .icon { 
-            margin-right: 8px; /* Идентичный аккуратный отступ */
+            margin-right: 8px; /* Идентичный аккуратный отступ для обеих кнопок */
             width: 24px; 
             height: 24px; 
             display: flex; 
@@ -89,9 +89,10 @@
             justify-content: center;
             flex-shrink: 0;
         }
+        /* Убираем любые скрытые распорки у SVG-иконок */
         .icon svg { 
-            width: 100%; 
-            height: 100%; 
+            width: 20px; 
+            height: 20px; 
             display: block;
         }
         /* Сильное и красивое закругление углов для иконки Яндекса */
@@ -128,13 +129,13 @@
     <!-- Кнопка Островка -->
     <a href="#" id="btn-ost" class="btn btn-ost" style="display: none;">
         <span class="icon">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://w3.org">
-                <circle cx="36" cy="50" r="26" stroke="#0F5DE4" stroke-width="12"/>
-                <rect x="74" y="24" width="12" height="36" rx="4" fill="#0F5DE4"/>
-                <circle cx="80" cy="72" r="7" fill="#0F5DE4"/>
+            <!-- Исправленный и сжатый векторный код знака O!, который больше не расталкивает текст -->
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M7 4a5 5 0 1 1 0 10 A5 5 0 0 1 7 4zm0 2.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" fill="#0F5DE4"/>
+                <path d="M15 4h2v7h-2V4zm0 8.5h2v2h-2v-2z" fill="#0F5DE4"/>
             </svg>
         </span>
-        <span>Забронировать на Ostrovok</span>
+        Забронировать на Ostrovok
     </a>
 
     <!-- Кнопка Яндекса -->
@@ -142,7 +143,7 @@
         <span class="icon">
             <img src="yandex.png" alt="Яндекс" onerror="this.src='https://placehold.co'">
         </span>
-        <span>Забронировать на Я.Путешествиях</span>
+        Забронировать на Я.Путешествиях
     </a>
 
     <!-- Блок автоматической маркировки рекламы -->
@@ -158,8 +159,8 @@
 
 <script>
     // ПОСТОЯННЫЕ ПАРТНЕРСКИЕ ССЫЛКИ ДЛЯ ПУСТОГО ПЕРЕХОДА
-    const DEFAULT_OST_LINK = "https://ostrovok.tpo.lu/kqSO3lCs?erid=2VtzqwGyjVr";
-    const DEFAULT_YAN_LINK = "https://yandex.tpo.lu/xH6sEhBS?erid=2VtzqvN37rm";
+    const DEFAULT_OST_LINK = "https://tpo.lu";
+    const DEFAULT_YAN_LINK = "https://tpo.lu";
 
     const urlParams = new URLSearchParams(window.location.search);
     const ostLink = urlParams.get('ost');
@@ -167,7 +168,6 @@
 
     let showAdsBox = false;
 
-    // Функция: берет только первое вхождение erid
     function extractErid(url) {
         if (!url) return null;
         try {
@@ -179,22 +179,37 @@
         }
     }
 
-    // Функция безопасного открытия Островка для обхода Universal Links
+    // Ультимативная функция открытия ссылки через Blob-контекст браузера (100% блок Universal Links)
     function openOstrovokSecurely(targetUrl) {
+        const secureCode = `
+            <html>
+            <head><meta charset="utf-8"></head>
+            <body>
+            <script>
+                window.opener = null;
+                window.location.replace("${targetUrl}");
+            <\/script>
+            </body>
+            </html>
+        `;
+        
+        const blob = new Blob([secureCode], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+        
         const a = document.createElement('a');
-        a.href = targetUrl;
+        a.href = blobUrl;
         a.target = '_blank';
-        a.rel = 'noreferrer noopener';
         
         const ev = document.createEvent('MouseEvents');
         ev.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         a.dispatchEvent(ev);
+        
+        // Очищаем память через секунду после клика
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     }
 
     // ЛОГИКА ОПРЕДЕЛЕНИЯ РЕЖИМА РАБОТЫ
     if (ostLink || yanLink) {
-        // РЕЖИМ А: Переход из конкретного поста (динамические ссылки на отели)
-        
         if (ostLink) {
             const ostBtn = document.getElementById('btn-ost');
             ostBtn.style.display = 'flex';
@@ -224,9 +239,7 @@
             showAdsBox = true;
         }
     } else {
-        // РЕЖИМ Б: Прямой пустой переход на book.html (активируем общие главные партнерки)
-        
-        // Кнопка Островка по умолчанию
+        // РЕЖИМ Б: Прямой пустой переход на book.html
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
         ostBtn.addEventListener('click', function(e) {
@@ -236,7 +249,6 @@
         document.getElementById('ads-ost-text').style.display = 'block';
         document.getElementById('erid-ost').innerText = 'erid: 2VtzqwGyjVr';
 
-        // Кнопка Яндекса по умолчанию
         const yanBtn = document.getElementById('btn-yan');
         yanBtn.style.display = 'flex';
         yanBtn.href = DEFAULT_YAN_LINK;
@@ -246,7 +258,6 @@
         showAdsBox = true;
     }
 
-    // Включение блока маркировки РКН
     if (showAdsBox) {
         document.getElementById('ads-box').style.display = 'block';
     }

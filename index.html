@@ -127,6 +127,12 @@
         }
         .mode-block { display: none; }
         .mode-block.active { display: block; }
+        /* Разделитель для кнопки возврата */
+        .back-divider {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -155,11 +161,14 @@
             Читать в MAX
         </a>
 
-        <a href="#" class="btn btn-map" onclick="return goBackToMap();">
-            <span class="icon"><img src="map.svg" alt="Карта отелей"></span>
-            Вернуться на карту
-        </a>
-
+        <!-- Кнопка возврата с логикой умного перехода назад -->
+        <div class="back-divider">
+            <a href="#" id="btn-back-to-map" class="btn btn-map" onclick="goBackToMap(event)">
+			<span class="icon"><img src="map.svg" alt="Карта отелей"></span>
+			Вернуться на карту
+			</a>
+        </div>
+		
     </div>
 
     <!-- РЕЖИМ 2: Главная мультиссылка-визитка проекта -->
@@ -191,17 +200,8 @@
 </div>
 
 <script>
-    function goBackToMap() {
-        // Возвращаем пользователя на предыдущую страницу браузера.
-        // Это сохраняет конкретное место/состояние карты, откуда он пришёл.
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            // Запасной вариант, если index.html был открыт напрямую.
-            window.location.href = "https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6";
-        }
-        return false;
-    }
+    // ⚠️ УКАЖИТЕ ССЫЛКУ НА ВАШУ КАРТУ GOOGLE MY MAPS ТУТ
+    const DEFAULT_MAP_URL = 'https://www.google.com/maps/d/u/0/embed?mid=1xEuLBvUY5Cc7rmODQmWGPZmlW2p7VIU&ll=54.02769224677006%2C27.687012611146415&z=6';
 
     function getParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -212,7 +212,7 @@
     const tgUrl = getParam('tg');
     const maxUrl = getParam('max');
 
-    if (vkUrl || tgUrl || maxUrl) {
+    if (vkUrl  tgUrl  maxUrl) {
         document.getElementById('mode-hotel').classList.add('active');
         
         if (tgUrl) { document.getElementById('link-tg').href = decodeURIComponent(tgUrl); } 
@@ -225,6 +225,20 @@
         else { document.getElementById('link-max').style.display = 'none'; }
     } else {
         document.getElementById('mode-main').classList.add('active');
+    }
+
+    // Функция проверки истории и возврата
+    function goBackToMap(event) {
+        event.preventDefault(); // Останавливаем мгновенное открытие дефолтной ссылки
+        
+        const referrer = document.referrer; // Узнаем предыдущий сайт пользователя
+        
+        // Проверяем, если адрес содержит домен Google Карт
+        if (referrer && (referrer.includes('://google.com') || referrer.includes('google.ru/maps'))) {
+            window.history.back(); // Возвращаем ровно на то же место карты
+        } else {
+            window.location.href = DEFAULT_MAP_URL; // Иначе открываем карту с чистого листа
+        }
     }
 </script>
 

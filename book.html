@@ -128,7 +128,7 @@
     <p>Выберите популярный сервис,<br>чтобы проверить свободные места<br>и актуальные цены:</p>
     
     <!-- Кнопка Островка -->
-    <a href="#" id="btn-ost" target="_blank" class="btn btn-ost" style="display: none;">
+    <a href="#" id="btn-ost" class="btn btn-ost" style="display: none;">
         <span class="icon-txt">O!</span>
         <span>Забронировать на Ostrovok</span>
     </a>
@@ -177,18 +177,27 @@
     // ЛОГИКА НАСТРОЙКИ ССЫЛОК И МАРКИРОВКИ
     if (ostLink || yanLink) {
         // РЕЖИМ А: Переход из конкретного поста (динамические ссылки на отели)
-        if (ostLink) {
-            const ostBtn = document.getElementById('btn-ost');
-            ostBtn.style.display = 'flex';
-            ostBtn.href = decodeURIComponent(ostLink);
-            
-            document.getElementById('ads-ost-text').style.display = 'block';
-            const foundErid = extractErid(ostLink);
-            if (foundErid) {
-                document.getElementById('erid-ost').innerText = 'erid: ' + foundErid;
-            }
-            showAdsBox = true;
-        }
+		if (ostLink) {
+			const ostBtn = document.getElementById('btn-ost');
+			ostBtn.style.display = 'flex';
+
+			const decodedOstLink = decodeURIComponent(ostLink);
+
+			ostBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+
+				// Переходим по исходной партнёрской ссылке
+				// Travelpayouts → Ostrovok /go/cpan/ → конечная страница
+				window.location.replace(decodedOstLink);
+			});
+    
+			document.getElementById('ads-ost-text').style.display = 'block';
+			const foundErid = extractErid(ostLink);
+			if (foundErid) {
+				document.getElementById('erid-ost').innerText = 'erid: ' + foundErid;
+		}
+		showAdsBox = true;
+		}
 
         if (yanLink) {
             const yanBtn = document.getElementById('btn-yan');
@@ -206,7 +215,10 @@
         // РЕЖИМ Б: Прямой пустой переход на book.html (Ваши постоянные партнерки)
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
-        ostBtn.href = DEFAULT_OST_LINK;
+        ostBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			window.location.replace(DEFAULT_OST_LINK);
+		});
         document.getElementById('ads-ost-text').style.display = 'block';
         document.getElementById('erid-ost').innerText = 'erid: 2VtzqwGyjVr';
 

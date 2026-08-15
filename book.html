@@ -63,10 +63,10 @@
             .btn:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-                filter: brightness(1.03);
+                filter: brightness(1.02);
             }
         }
-        .btn:active { transform: translateY(1px); filter: brightness(0.97); }
+        .btn:active { transform: translateY(1px); filter: brightness(0.98); }
         
         /* СТИЛЬ ОСТРОВКА (Салатовый + Синий ультрамарин) */
         .btn-ost { 
@@ -74,14 +74,14 @@
             color: #0F5DE4;
         }
         
-        /* СТИЛЬ ЯНДЕКСА (Мягкий сине-фиолетовый + Белый текст) */
+        /* ОФИЦИАЛЬНЫЙ СТИЛЬ ЯНДЕКСА (Лиловый фон + Чернично-синий текст) */
         .btn-yan { 
-            background-color: #7A5CFA; 
-            color: #ffffff;
+            background-color: #d8cffe; 
+            color: #513aae;
         }
 
         .icon { 
-            margin-right: 8px; /* Фиксированный аккуратный отступ */
+            margin-right: 8px;
             width: 24px; 
             height: 24px; 
             display: flex; 
@@ -94,12 +94,11 @@
             height: 100%; 
             display: block;
         }
-        /* Стили для подгружаемой картинки Яндекса скруглением углов */
         .icon img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 5px; /* Аккуратное закругление углов */
+            border-radius: 5px;
         }
         
         /* Маркировка рекламы */
@@ -140,7 +139,6 @@
     <!-- Кнопка Яндекса -->
     <a href="#" id="btn-yan" class="btn btn-yan" style="display: none;">
         <span class="icon">
-            <!-- Подгружаем ваш файл yandex.png со скруглением из стилей -->
             <img src="yandex.png" alt="Яндекс" onerror="this.src='https://placehold.co'">
         </span>
         <span>Забронировать на Я.Путешествиях</span>
@@ -164,22 +162,36 @@
 
     let showAdsBox = false;
 
+    // Функция: берет только первое вхождение erid, исключая задвоения
     function extractErid(url) {
         if (!url) return null;
         try {
             const decodedUrl = decodeURIComponent(url);
             const match = decodedUrl.match(/[?&]erid=([^&]+)/);
-            return match ? match : null;
+            return match ? match[1] : null; // Извлекаем строго чистый токен из первой группы
         } catch(e) {
             return null;
         }
     }
 
-    // Настройка Островка (Прямой переход, защита переносится на уровень m.ostrovok.ru в ссылках)
+    // Настройка Островка (Полный обрыв контекста через чистую вкладку)
     if (ostLink) {
         const ostBtn = document.getElementById('btn-ost');
         ostBtn.style.display = 'flex';
-        ostBtn.href = decodeURIComponent(ostLink);
+        ostBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetUrl = decodeURIComponent(ostLink);
+            
+            // Изолированное окно для предотвращения вызова Universal Links
+            const newWindow = window.open('about:blank', '_blank');
+            if (newWindow) {
+                newWindow.opener = null;
+                newWindow.location.href = targetUrl;
+            } else {
+                window.location.href = targetUrl;
+            }
+        });
         
         document.getElementById('ads-ost-text').style.display = 'block';
         const foundErid = extractErid(ostLink);

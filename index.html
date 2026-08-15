@@ -72,7 +72,18 @@
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
-        
+        @media (hover: hover) {
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+                filter: brightness(1.05);
+            }
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            filter: brightness(0.95);
+        }        
         /* Уникальные стили для каждой кнопки */
         .btn-tg { 
             background: linear-gradient(135deg, #37aee2 0%, #1e96c8 100%); 
